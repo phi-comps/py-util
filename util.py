@@ -30,7 +30,7 @@ def equate(p1, p2, var):
     p2_ = p2.expand()
     mdeg = max(p1_.as_poly(var).degree(), p2_.as_poly(var).degree())
     for deg in range(mdeg + 1):
-        yield p1_.coeff(var, n=deg), p2_.coeff(var, n=deg)
+        yield sy.Eq(p1_.coeff(var, n=deg), p2_.coeff(var, n=deg))
 
 def mk_deg(n, sub, var):
     assert n > 0
