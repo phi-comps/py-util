@@ -11,7 +11,8 @@ p2_ = mk_deg(4, 2, xg)
 
 for subscript in [1, 2]:
     for var in 'abcdp':
-        globals()['{}{}'.format(var, subscript)] = sy.Symbol('{}_{}'.format(var, subscript))
+        name = '{}{}'.format(var, subscript)
+        globals()[name] = sy.Symbol(name)
 
 
 def bigsubs(eqns, x, y):
@@ -57,5 +58,29 @@ def snd():
 pp1 = p1_.subs(d1, d)
 pp2 = p2_.subs(d2, -d)
 eqns = nontriv(equate(f_it(3), pp1*pp2, xg))
-print(eqns)
-print(sy.solve(eqns))
+
+def show(eqns):
+    for i, e in enumerate(eqns):
+        print(i, e)
+    print()
+show(eqns)
+
+def only(xs):
+    assert len(xs) == 1
+    return xs[0]
+
+c2_ = only(solve(eqns[6], c2))
+eqns = nontriv(bigsubs(bigsubs(eqns, c2, c2_), c1, c))
+show(eqns)
+
+b2_ = only(solve(eqns[5], b2))
+eqns = nontriv(bigsubs(bigsubs(eqns, b2, b2_), b1, b))
+show(eqns)
+
+a2_ = only(solve(eqns[4], a2))
+eqns1 = nontriv(bigsubs(eqns, a2, a2_))
+show(eqns1)
+
+a1_ = only(solve(eqns[4], a1))
+eqns2 = nontriv(bigsubs(eqns, a1, a1_))
+show(eqns2)

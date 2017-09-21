@@ -34,7 +34,7 @@ def equate(p1, p2, var):
 
 def mk_deg(n, sub, var):
     assert n > 0
-    cs = iter(sy.symbols(' '.join('{}_{}'.format(c, sub) for c in string.ascii_lowercase)))
+    cs = iter(sy.symbols(' '.join('{}{}'.format(c, sub) for c in string.ascii_lowercase)))
     p = 0
     for i in range(n):
         p += next(cs)*var**i
