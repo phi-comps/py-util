@@ -69,18 +69,20 @@ def only(xs):
     assert len(xs) == 1
     return xs[0]
 
-c2_ = only(solve(eqns[6], c2))
-eqns = nontriv(bigsubs(bigsubs(eqns, c2, c2_), c1, c))
-show(eqns)
 
-b2_ = only(solve(eqns[5], b2))
-eqns = nontriv(bigsubs(bigsubs(eqns, b2, b2_), b1, b))
-show(eqns)
+def xx():
+    c2_ = only(solve(eqns[6], c2))
+    eqns = nontriv(bigsubs(bigsubs(eqns, c2, c2_), c1, c))
+    show(eqns)
 
-a2_ = only(solve(eqns[4], a2))
-eqns1 = nontriv(bigsubs(eqns, a2, a2_))
-show(eqns1)
+    b2_ = only(solve(eqns[5], b2))
+    eqns = nontriv(bigsubs(bigsubs(eqns, b2, b2_), b1, b))
+    show(eqns)
 
-a1_ = only(solve(eqns[4], a1))
-eqns2 = nontriv(bigsubs(eqns, a1, a1_))
-show(eqns2)
+    a2_ = only(solve(eqns[4], a2))
+    eqns1 = nontriv(bigsubs(eqns, a2, a2_))
+    show(eqns1)
+
+    a1_ = only(solve(eqns[4], a1))
+    eqns2 = nontriv(bigsubs(eqns, a1, a1_))
+    show(eqns2)
