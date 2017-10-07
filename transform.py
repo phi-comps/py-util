@@ -99,21 +99,12 @@ def from_w_coeffs(a1_, a2_, a3_, a4_, a6_):
 
 def transform(c0_, c1_, c2_, c3_, c4_, alpha_):
     curve = -P_.subs(c0, c0_).subs(c1, c1_).subs(c2, c2_).subs(c3, c3_).subs(c4, c4_).subs(alpha, alpha_)
-    def coord_trans(x, y):
-        xt = foo.subs(c0, c0_).subs(c1, c1_).subs(c2, c2_).subs(c3, c3_).subs(c4, c4_).subs(alpha, alpha_).subs(T1, x).subs(S1, y)
-        yt = bar.subs(c0, c0_).subs(c1, c1_).subs(c2, c2_).subs(c3, c3_).subs(c4, c4_).subs(alpha, alpha_).subs(T1, x).subs(S1, y)
-        return xt, yt
-    def check_coords(x, y):
-        return p_0.subs(c0, c0_).subs(c1, c1_).subs(c2, c2_).subs(c3, c3_).subs(c4, c4_).subs(x0, x).subs(y0, y) == 0
-    return to_w_coeffs(curve.subs(T1, x).subs(S1, y)), coord_trans, check_coords
+    x0_ = foo.subs(T1, x).subs(S1, y).subs(c0, c0_).subs(c1, c1_).subs(c2, c2_).subs(c3, c3_).subs(c4, c4_).subs(alpha, alpha_)
+    y0_ = bar.subs(T1, x).subs(S1, y).subs(c0, c0_).subs(c1, c1_).subs(c2, c2_).subs(c3, c3_).subs(c4, c4_).subs(alpha, alpha_)
+    return to_w_coeffs(curve.subs(T1, x).subs(S1, y)), x0_, y0_
 
 def test():
-    test_curve, test_trans, check_coords = transform(21, 0, -14, 0, 2, 1)
-    assert check_coords(*test_trans(Rational(53,81), Rational(289,81)))
-
-# xx = x1_.subs()
-
-# P = f4*x**4 + f3*x**3 + f2*x**2 + f1*x + f0 - y**2
-# P0 = P.subs(x, 1/(x - alpha)).subs(y, y/(x - alpha)**2)
-# Q = P0.expand().simplify().as_numer_denom()[0].as_poly(x)
-# Q
+    C, x0_, y0_ = transform(21, 0, -14, 0, 2, 1)
+    x0__ = x0_.subs(x, Rational(53,81)).subs(y, Rational(289,81))
+    y0__ = y0_.subs(x, Rational(53,81)).subs(y, Rational(289,81))
+    assert p_0.subs(c0, 21).subs(c1, 0).subs(c2, -14).subs(c3, 0).subs(c4, 2).subs(x0, x0__).subs(y0, y0__) == 0

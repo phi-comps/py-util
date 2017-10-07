@@ -54,16 +54,3 @@ def mk_gammas_at():
 
 qq = 2*d**4 + 8*d**2*m + 16*m**2 + 16*m
 
-def qq_of(m_):
-    return qq.subs(m, m_)
-
-def ec_of(m_, alpha_):
-    qq.subs
-    return x_trans, y_trans, coeffs
-
-g_ = x**2 + g1*x + g0
-h_ = h1*x + h0
-
-# pp1 = p1_.subs(d1, d)
-# pp2 = p2_.subs(d2, -d)
-# eqns = nontriv(equate(f_it(3), pp1*pp2, xg))
