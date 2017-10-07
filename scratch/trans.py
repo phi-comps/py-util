@@ -64,6 +64,8 @@ eqns = nontriv(bigsubs(eqns, h0, h0_))
 
 # T0_ = y3 + g_
 # S0_ = T0_*x3
+x3_ = S0/T0
+y3_ = T0 - g_.subs(x3, x3_)
 
 P_0 = 2*S0**2 + 2*g1*T0*S0 + 2*g0*T0**2 - T0**3 + h1*S0 + h0*T0
 
@@ -79,6 +81,7 @@ def go(c0_, c1_, c2_, c3_, c4_, alpha_):
     return P_.subs(c0, c0_).subs(c1, c1_).subs(c2, c2_).subs(c3, c3_).subs(c4, c4_).subs(alpha, alpha_)
 
 print(go(21, 0, -14, 0, 2, 1).expand())
+
 # xx = x1_.subs()
 
 # P = f4*x**4 + f3*x**3 + f2*x**2 + f1*x + f0 - y**2
