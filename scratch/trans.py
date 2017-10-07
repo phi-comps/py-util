@@ -22,7 +22,7 @@ def show(eqns):
     print()
 
 for subscript in [0, 1, 2, 3, 4]:
-    for var in 'abcdefghxy':
+    for var in 'abcdefghxyST':
         name = '{}{}'.format(var, subscript)
         globals()[name] = Symbol(name)
 
@@ -62,15 +62,25 @@ eqns = nontriv(bigsubs(eqns, h1, h1_))
 h0_ = only(solve(eqns[0], h0))
 eqns = nontriv(bigsubs(eqns, h0, h0_))
 
-x_ = y3 + g_
-y_ = x_*x3
+# T0_ = y3 + g_
+# S0_ = T0_*x3
 
-P = 2*y**2 + 2*g1*x*y + 2*g0*x**2 - x**3 + h1*y + h0*x
+P_0 = 2*S0**2 + 2*g1*T0*S0 + 2*g0*T0**2 - T0**3 + h1*S0 + h0*T0
 
-P_ = P.subs(g0, g0_).subs(g1, g1_).subs(h0, h0_).subs(h1, h1_).subs(f0, f0_).subs(f1, f1_).subs(f2, f2_).subs(f3, f3_)
+# T0_ = 2*T1
+# S0_ = 2*S1
+T0_ = T1/2
+S0_ = S1/4
+P_1 = P_0.subs(T0, T0_).subs(S0, S0_).expand().simplify()*8
+
+P_ = P_1.subs(g0, g0_).subs(g1, g1_).subs(h0, h0_).subs(h1, h1_).subs(f0, f0_).subs(f1, f1_).subs(f2, f2_).subs(f3, f3_)
 
 def go(c0_, c1_, c2_, c3_, c4_, alpha_):
     return P_.subs(c0, c0_).subs(c1, c1_).subs(c2, c2_).subs(c3, c3_).subs(c4, c4_).subs(alpha, alpha_)
+
+print(go(21, 0, -14, 0, 2, 1).expand())
+# xx = x1_.subs()
+
 # P = f4*x**4 + f3*x**3 + f2*x**2 + f1*x + f0 - y**2
 # P0 = P.subs(x, 1/(x - alpha)).subs(y, y/(x - alpha)**2)
 # Q = P0.expand().simplify().as_numer_denom()[0].as_poly(x)
