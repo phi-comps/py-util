@@ -96,40 +96,15 @@ gx, gy = Rational(53,81), Rational(289,81)
 C = EllipticCurve(*coeffs)
 P0 = Point(gx, gy, 1, C)
 P = P0
-for _ in range(10):
+while True:
     d_ = xtrans.subs(x, P.x).subs(y, P.y)
     for g_ in gammas_at(d_, m_):
         if check_newly(g_, m_):
             print("gamma:", g_)
             print("m:", m_)
             print("f(x) =", ((x - g_)**2 + g_ + m_).expand())
-            print("f^3(x) = p_1(x)*p_2(x)")
-            a_, b_, c_ = abc(g_, m_, d_)
-            p1, p2 = factors(a_, b_, c_, d_)
-            f3 = f_it(3).subs(xg, x - gamma).subs(gamma, g_).subs(m, m_).expand()
-            print()
-            print("p_1(x) = ", p1.subs(gamma, g_).expand())
-            print()
-            print("p_2(x) = ", p2.subs(gamma, g_).expand())
-            print()
-            fs = f3.factor()
-            n, _ = fs.as_numer_denom()
-            l, r = n.as_two_terms()
-            p1_ = (l/l.coeff(x**4)).expand()
-            p2_ = (r/r.coeff(x**4)).expand()
-            # p1_ = l/l.
-            print("p_1_(x) = ", p1_)
-            print()
-            print("p_2_(x) = ", p2_)
-            print()
-            print()
-            if (p1*p2).subs(gamma, g_).expand() != f3:
-                print("BAD")
-                print((p1*p2).subs(gamma, g_).expand())
-                print()
-                print(f3)
-                assert False
-            assert (p1*p2).subs(gamma, g_).expand() == f3
-            print()
+            fact = f_it(3).subs(xg, x - gamma).subs(gamma, g_).subs(m, m_).expand().factor()
+            assert fact.as_numer_denom()[0].as_two_terms()[0].as_poly(x).degree() == 4
+            print("f^3(x) =", fact)
             print()
     P = P + P0
