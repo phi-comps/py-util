@@ -28,12 +28,13 @@ eqns = nontriv(bigsubs(eqns, a, only(solve(eqns[2], a))))
 
 gammas = [ only(solve(eqns[0].subs(b, b_), gamma)) for b_ in solve(eqns[1], b) ]
 
-def gammas_at(d_, m_):
+def gammas_at(m_, d_):
     for gamma_ in gammas:
         yield gamma_.subs(d, d_).subs(m, m_)
 
+
 def test1():
-    gammas = list(gammas_at(1, -Rational(7,4)))
+    gammas = list(gammas_at(-Rational(7,4), 1))
     for g in [Rational(11,16), Rational(1,2)]:
         assert g in gammas
 test1()
@@ -44,25 +45,43 @@ class Points(object):
 
     def __init__(self, m_, alpha_):
         self.m = m_
-        self.ec, selt.xtrans, self.ytrans = tranform(16*m_**2 + 16*m_, 0, 8*m_, 0, 2, alpha_)
-        self.eco = EllipticCurve(self.ec)
-        # self.gens = 
+        self.coeffs, selt.xtrans, self.ytrans = tranform(16*m_**2 + 16*m_, 0, 8*m_, 0, 2, alpha_)
+        self.C = EllipticCurve(self.coeffs)
+        self.gens = 1/0
 
     def gammas():
         for gx, gy in self.gens:
-            yield from gammas_at(xtrans.subs(x, gx).subs(y, gy), self.m)
+            yield from gammas_at(self.m, xtrans.subs(x, gx).subs(y, gy))
 
-def abc(gamma_, m_, d_):
+
+# def abc(gamma_, m_, d_):
+#     c_ = (4*m_ + d_**2)/2
+#     a_ = -sqrt(gamma_ + m_**4 + 2*m_**3 + m_**2 + m_) # to align with sympy's fact alg
+#     b_ = (6*m_**2 + 2*m_ - 2*a_ - c_**2)/(-2*d_)
+#     return a_, b_, c_
+
+xg_ = x - gamma
+p1_ = a + b*xg_ + c*xg_**2 + d*xg_**3 + xg_**4
+p2_ = a - b*xg_ + c*xg_**2 - d*xg_**3 + xg_**4
+
+def factor(gamma_, m_, d_):
+    f_ = ((x - gamma_)**2 + gamma_ + m_).expand().as_poly(x)
+    fff_ = f_.compose(f_).compose(f_).as_expr().expand()
     c_ = (4*m_ + d_**2)/2
-    a_ = sqrt(gamma_ + m_**4 + 2*m_**3 + m_**2 + m_) # to align with sympy's fact alg
-    b_ = (6*m_**2 + 2*m_ - 2*a_ - c_**2)/(-2*d_)
-    return a_, b_, c_
-
-def factors(a_, b_, c_, d_):
-    xg_ = x - gamma
-    p1 = a_ + b_*xg_ + c_*xg_**2 + d_*xg_**3 + xg_**4
-    p2 = a_ - b_*xg_ + c_*xg_**2 - d_*xg_**3 + xg_**4
-    return p1, p2
+    a_ = sqrt(gamma_ + m_**4 + 2*m_**3 + m_**2 + m_)
+    b_ = (6*m_**2 + 2*m_ - 2*a - c_**2)/(-2*d_)
+    fff = p1_*p2_
+    if fff_ == fff.subs(d, d_).subs(c, c_).subs(b, b_).subs(a, a_).subs(gamma, gamma_).expand():
+        return (
+            p1_.subs(d, d_).subs(c, c_).subs(b, b_).subs(a, a_).subs(gamma, gamma_).expand(),
+            p2_.subs(d, d_).subs(c, c_).subs(b, b_).subs(a, a_).subs(gamma, gamma_).expand(),
+            )
+    if fff_ == fff.subs(d, d_).subs(c, c_).subs(b, b_).subs(a, -a_).subs(gamma, gamma_).expand():
+        return (
+            p1_.subs(d, d_).subs(c, c_).subs(b, b_).subs(a, -a_).subs(gamma, gamma_).expand(),
+            p2_.subs(d, d_).subs(c, c_).subs(b, b_).subs(a, -a_).subs(gamma, gamma_).expand(),
+            )
+    assert False
 
 def check_newly(gamma_, m_):
     return not sqrt(-gamma_ - m_).is_Rational and (not sqrt(-2*m_ + 2*sqrt(gamma_ + m_**2 + m_)).is_Rational and not sqrt(-2*m_ - 2*sqrt(gamma_ + m_**2 + m_)).is_Rational)
@@ -76,16 +95,17 @@ gx, gy = Rational(53,81), Rational(289,81)
 C = EllipticCurve(*coeffs)
 P0 = Point(gx, gy, 1, C)
 P = P0
-while False:
-# while True:
+while True:
     d_ = xtrans.subs(x, P.x).subs(y, P.y)
-    for g_ in gammas_at(d_, m_):
-        if check_newly(g_, m_):
-            print("gamma:", g_)
+    for gamma_ in gammas_at(m_, d_):
+        if check_newly(gamma_, m_):
+            print("gamma:", gamma_)
             print("m:", m_)
-            print("f(x) =", ((x - g_)**2 + g_ + m_).expand())
-            fact = f_it(3).subs(xg, x - gamma).subs(gamma, g_).subs(m, m_).expand().factor()
-            assert fact.as_numer_denom()[0].as_two_terms()[0].as_poly(x).degree() == 4
-            print("f^3(x) =", fact)
+            print("f(x) =", ((x - gamma_)**2 + gamma_ + m_).expand())
+            print("f^3(x) = p1(x)*p2(x)")
+            p1, p2 = factor(gamma_, m_, d_)
+            print("p1(x) =", p1)
+            print("p2(x) =", p2)
             print()
     P = P + P0
+
