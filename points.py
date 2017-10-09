@@ -1,34 +1,16 @@
-from util import *
 from sympy import *
-import sympy as sy
 from sympy.abc import a, b, c, d, m, x, y, alpha, beta, gamma
-from contextlib import contextmanager
-import itertools as it
 from numbers import Number
 
+from util import *
 from transform import transform
 from ec import EllipticCurve, Point
 
-def bigsubs(eqns, x, y):
-    return [ eq.subs(x, y) for eq in eqns ]
 
-def nontriv(eqns):
-    return [ eq for eq in eqns if eq.free_symbols and eq.expand().free_symbols ]
-
-def only(xs):
-    assert len(xs) == 1
-    return xs[0]
-
-def show(eqns):
-    for i, e in enumerate(eqns):
-        print(i, e)
-    print()
-
-
-for subscript in [0, 1, 2, 3, 4]:
+for subscript in range(5):
     for var in 'abcdefgh':
         name = '{}{}'.format(var, subscript)
-        globals()[name] = sy.Symbol(name)
+        globals()[name] = Symbol(name)
 
 
 p1_ = mk_deg(4, 1, xg)
@@ -54,7 +36,7 @@ def test1():
     gammas = list(gammas_at(1, -Rational(7,4)))
     for g in [Rational(11,16), Rational(1,2)]:
         assert g in gammas
-
+test1()
 
 qq = 2*d**4 + 8*d**2*m + 16*m**2 + 16*m
 
@@ -86,17 +68,16 @@ def check_newly(gamma_, m_):
     return not sqrt(-gamma_ - m_).is_Rational and (not sqrt(-2*m_ + 2*sqrt(gamma_ + m_**2 + m_)).is_Rational and not sqrt(-2*m_ - 2*sqrt(gamma_ + m_**2 + m_)).is_Rational)
 
 
-# def lame():
 m_ = -Rational(7, 4)
 cs = [16*m_**2 + 16*m_, 0, 8*m_, 0, 2]
 alpha_ = 1
 coeffs, xtrans, ytrans = transform(*cs, alpha_)
-# print(coeffs)
 gx, gy = Rational(53,81), Rational(289,81)
 C = EllipticCurve(*coeffs)
 P0 = Point(gx, gy, 1, C)
 P = P0
-while True:
+while False:
+# while True:
     d_ = xtrans.subs(x, P.x).subs(y, P.y)
     for g_ in gammas_at(d_, m_):
         if check_newly(g_, m_):
