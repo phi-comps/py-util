@@ -4,20 +4,20 @@ Miscellaneous polynomial-related utility objects.
 
 import string
 import sympy as sy
+from sympy.abc import m, x, gamma
 
-g, m = sy.symbols('gamma m')
-x, xg = sy.symbols('x xg')
+xg = sy.Symbol('x xg')
 
-quad = (x - g)**2 + g + m
-quad_ = xg**2 + g + m
+quad_split = (x - gamma)**2 + gamma + m
+quad_joined = xg**2 + gamma + m
 
 def f_it(n):
     assert n > 0
     f = x
     while n > 1:
-        f = f.subs(x, quad)
+        f = f.subs(x, quad_split)
         n -= 1
-    return f.subs(x, quad_).expand()
+    return f.subs(x, quad_joined).expand()
 
 def as_list(f):
     def g(*args, **kwargs):
@@ -42,3 +42,19 @@ def mk_deg(n, sub, var):
 
 def fancy(expr):
     return sy.latex(expr).replace('xg', r'\xg')
+
+def only(xs):
+    assert len(xs) == 1
+    return xs[0]
+
+def bigsubs(eqns, x, y):
+    return [ eq.subs(x, y) for eq in eqns ]
+
+def nontriv(eqns):
+    return [ eq for eq in eqns if eq.free_symbols and eq.expand().free_symbols ]
+
+
+def show(eqns):
+    for i, e in enumerate(eqns):
+        print(i, e)
+    print()
