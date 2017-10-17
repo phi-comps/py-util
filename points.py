@@ -1,64 +1,118 @@
-from sympy import *
+
+# coding: utf-8
+
+# In[1]:
+
+import sympy as sy
+from sympy import Symbol, Eq, Rational, sqrt, solve
 from sympy.abc import a, b, c, d, m, x, y, alpha, beta, gamma
-from numbers import Number
+
+from IPython.display import display, Latex
 
 from util import *
-from transform import transform
+from transform import *
 from ec import EllipticCurve, Point
 
+__all__ = [
+    'gammas_at',
+    'gammas',
+    'gamma_nice'
+    'gamma',
+    'beta',
+    'beta_',
+    'qq',
+    'factor',
+    'check_newly',
+    ]
 
 for subscript in range(5):
     for var in 'abcdefgh':
         name = '{}{}'.format(var, subscript)
         globals()[name] = Symbol(name)
 
+def show(eqs):
+    display(Latex('\n'.join(
+        [r'\begin{align}']
+        + list(r'{} &= {} \\'.format(sy.latex(eq.lhs), sy.latex(eq.rhs)) for eq in eqs)
+        + [r'\end{align}']
+    )))
+
+
+# In[2]:
 
 p1_ = mk_deg(4, 1, xg)
 p2_ = mk_deg(4, 2, xg)
-eqns = nontriv(equate(f_it(3), p1_*p2_, xg))
+eqs = nontriv(equate(f_it(3), p1_*p2_, xg))
+show(eqs)
 
-eqns = nontriv(bigsubs(bigsubs(eqns, d1, d), d2, -d))
-eqns = nontriv(bigsubs(bigsubs(eqns, a1, a), a2, a))
-eqns = nontriv(bigsubs(bigsubs(eqns, b1, b), b2, -b))
-eqns = nontriv(bigsubs(bigsubs(eqns, c1, c), c2, c))
-eqns1 = eqns
 
-eqns = nontriv(bigsubs(eqns, c, only(solve(eqns[3], c))))
-eqns = nontriv(bigsubs(eqns, a, only(solve(eqns[2], a))))
+# In[3]:
 
-gammas = [ only(solve(eqns[0].subs(b, b_), gamma)) for b_ in solve(eqns[1], b) ]
+eqs = nontriv(bigsubs(bigsubs(eqs, d1, d), d2, -d))
+show(eqs)
+
+
+# In[4]:
+
+eqs = nontriv(bigsubs(bigsubs(eqs, a1, a), a2, a))
+show(eqs)
+
+
+# In[5]:
+
+eqs = nontriv(bigsubs(bigsubs(eqs, b1, b), b2, -b))
+show(eqs)
+
+
+# In[6]:
+
+eqs = nontriv(bigsubs(bigsubs(eqs, c1, c), c2, c))
+show(eqs)
+
+
+# In[7]:
+
+eqs = nontriv(bigsubs(eqs, c, only(solve(eqs[3], c))))
+show(eqs)
+
+
+# In[8]:
+
+eqs = nontriv(bigsubs(eqs, a, only(solve(eqs[2], a))))
+show(eqs)
+
+
+# In[9]:
+
+b_s = solve(eqs[1], b)
+display(Latex('$b={}$'.format(sy.latex(b_s))))
+
+
+# In[10]:
+
+gammas = [ only(solve(eqs[0].subs(b, b_), gamma)) for b_ in b_s ]
+display(Latex('$\gamma={}$'.format(sy.latex(gammas))))
+
+
+# In[11]:
+
+beta_ = sqrt(2*d**4 + 8*m*d**2 + 16*m**2 + 16*m)
+beta__ = sqrt(2)*sqrt(d**4 + 4*m*d**2 + 8*m**2 + 8*m)
+assert beta_ == beta__.simplify()
+tmp = gammas[0].subs(beta__, beta).expand().subs(beta**2, beta_**2).expand()
+gamma_nice = beta*tmp.coeff(beta, n=1) + tmp.coeff(beta, n=0)
+display(Eq(beta, beta_))
+display(Eq(beta, -beta_))
+display(Eq(gamma, gamma_nice))
+
+
+# In[12]:
+
+qq = 2*d**4 + 8*d**2*m + 16*m**2 + 16*m
 
 def gammas_at(m_, d_):
     for gamma_ in gammas:
         yield gamma_.subs(d, d_).subs(m, m_)
-
-
-def test1():
-    gammas = list(gammas_at(-Rational(7,4), 1))
-    for g in [Rational(11,16), Rational(1,2)]:
-        assert g in gammas
-test1()
-
-qq = 2*d**4 + 8*d**2*m + 16*m**2 + 16*m
-
-class Points(object):
-
-    def __init__(self, m_, alpha_):
-        self.m = m_
-        self.coeffs, selt.xtrans, self.ytrans = tranform(16*m_**2 + 16*m_, 0, 8*m_, 0, 2, alpha_)
-        self.C = EllipticCurve(self.coeffs)
-        self.gens = 1/0
-
-    def gammas():
-        for gx, gy in self.gens:
-            yield from gammas_at(self.m, xtrans.subs(x, gx).subs(y, gy))
-
-
-# def abc(gamma_, m_, d_):
-#     c_ = (4*m_ + d_**2)/2
-#     a_ = -sqrt(gamma_ + m_**4 + 2*m_**3 + m_**2 + m_) # to align with sympy's fact alg
-#     b_ = (6*m_**2 + 2*m_ - 2*a_ - c_**2)/(-2*d_)
-#     return a_, b_, c_
 
 xg_ = x - gamma
 p1_ = a + b*xg_ + c*xg_**2 + d*xg_**3 + xg_**4
@@ -85,3 +139,4 @@ def factor(gamma_, m_, d_):
 
 def check_newly(gamma_, m_):
     return not sqrt(-gamma_ - m_).is_Rational and (not sqrt(-2*m_ + 2*sqrt(gamma_ + m_**2 + m_)).is_Rational and not sqrt(-2*m_ - 2*sqrt(gamma_ + m_**2 + m_)).is_Rational)
+
