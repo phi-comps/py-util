@@ -40,8 +40,6 @@ def mk_deg(n, sub, var):
         p += next(cs)*var**i
     return p + var**n
 
-def fancy(expr):
-    return sy.latex(expr).replace('xg', r'\xg')
 
 def only(xs):
     assert len(xs) == 1
@@ -54,7 +52,10 @@ def nontriv(eqns):
     return [ eq for eq in eqns if eq.free_symbols and eq.expand().free_symbols ]
 
 
-def show(eqns):
-    for i, e in enumerate(eqns):
-        print(i, e)
-    print()
+# def fancy(expr):
+#     return sy.latex(expr).replace('xg', r'\xg')
+
+# def show(eqns):
+#     for i, e in enumerate(eqns):
+#         print(i, e)
+#     print()
