@@ -16,7 +16,7 @@ from ec import EllipticCurve, Point
 __all__ = [
     'gammas_at',
     'gammas',
-    'gamma_nice'
+    'gamma_nice',
     'gamma',
     'beta',
     'beta_',
