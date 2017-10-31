@@ -3,6 +3,7 @@
 
 # In[1]:
 
+
 import sympy as sy
 from sympy import Symbol, Eq, Rational, sqrt, solve
 from sympy.abc import a, b, c, d, m, x, y, alpha, beta, gamma
@@ -20,6 +21,8 @@ __all__ = [
     'gamma',
     'beta',
     'beta_',
+    'aa_',
+    'bb_',
     'qq',
     'factor',
     'check_newly',
@@ -30,8 +33,12 @@ for subscript in range(5):
         name = '{}{}'.format(var, subscript)
         globals()[name] = Symbol(name)
 
+def displ(*x):
+    if __name__ == '__main__':
+        display(*x)
+
 def show(eqs):
-    display(Latex('\n'.join(
+    displ(Latex('\n'.join(
         [r'\begin{align}']
         + list(r'{} &= {} \\'.format(sy.latex(eq.lhs), sy.latex(eq.rhs)) for eq in eqs)
         + [r'\end{align}']
@@ -39,6 +46,7 @@ def show(eqs):
 
 
 # In[2]:
+
 
 p1_ = mk_deg(4, 1, xg)
 p2_ = mk_deg(4, 2, xg)
@@ -48,11 +56,13 @@ show(eqs)
 
 # In[3]:
 
+
 eqs = nontriv(bigsubs(bigsubs(eqs, d1, d), d2, -d))
 show(eqs)
 
 
 # In[4]:
+
 
 eqs = nontriv(bigsubs(bigsubs(eqs, a1, a), a2, a))
 show(eqs)
@@ -60,11 +70,13 @@ show(eqs)
 
 # In[5]:
 
+
 eqs = nontriv(bigsubs(bigsubs(eqs, b1, b), b2, -b))
 show(eqs)
 
 
 # In[6]:
+
 
 eqs = nontriv(bigsubs(bigsubs(eqs, c1, c), c2, c))
 show(eqs)
@@ -72,11 +84,13 @@ show(eqs)
 
 # In[7]:
 
+
 eqs = nontriv(bigsubs(eqs, c, only(solve(eqs[3], c))))
 show(eqs)
 
 
 # In[8]:
+
 
 eqs = nontriv(bigsubs(eqs, a, only(solve(eqs[2], a))))
 show(eqs)
@@ -84,29 +98,35 @@ show(eqs)
 
 # In[9]:
 
+
 b_s = solve(eqs[1], b)
-display(Latex('$b={}$'.format(sy.latex(b_s))))
+displ(Latex('$b={}$'.format(sy.latex(b_s))))
 
 
 # In[10]:
 
+
 gammas = [ only(solve(eqs[0].subs(b, b_), gamma)) for b_ in b_s ]
-display(Latex('$\gamma={}$'.format(sy.latex(gammas))))
+displ(Latex('$\gamma={}$'.format(sy.latex(gammas))))
 
 
 # In[11]:
+
 
 beta_ = sqrt(2*d**4 + 8*m*d**2 + 16*m**2 + 16*m)
 beta__ = sqrt(2)*sqrt(d**4 + 4*m*d**2 + 8*m**2 + 8*m)
 assert beta_ == beta__.simplify()
 tmp = gammas[0].subs(beta__, beta).expand().subs(beta**2, beta_**2).expand()
-gamma_nice = beta*tmp.coeff(beta, n=1) + tmp.coeff(beta, n=0)
-display(Eq(beta, beta_))
-display(Eq(beta, -beta_))
-display(Eq(gamma, gamma_nice))
+aa_ = tmp.coeff(beta, n=1)
+bb_ = tmp.coeff(beta, n=0)
+gamma_nice = beta*aa_ + bb_
+displ(Eq(beta, beta_))
+displ(Eq(beta, -beta_))
+displ(Eq(gamma, gamma_nice))
 
 
 # In[12]:
+
 
 qq = 2*d**4 + 8*d**2*m + 16*m**2 + 16*m
 

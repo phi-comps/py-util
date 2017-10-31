@@ -1,10 +1,16 @@
-with import <nixpkgs> {}; stdenv.mkDerivation {
+with import <nixpkgs> {};
+let
+  pyeclib = callPackage ../pyeclib {};
+in stdenv.mkDerivation {
   name = "env";
-  buildInputs = [
-    eclib
-    python35
-    python35Packages.sympy
-    python35Packages.ipython
-    python35Packages.jupyter
+  buildInputs = with python3Packages; [
+    sympy
+    pyeclib
+    python3
+    notebook
+    jupyter_console
+    nbconvert
+    ipykernel
+    ipywidgets
   ];
 }
