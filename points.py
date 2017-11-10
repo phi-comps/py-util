@@ -26,6 +26,9 @@ __all__ = [
     'qq',
     'factor',
     'check_newly',
+    'up55',
+    'lo55',
+    'nice',
     ]
 
 for subscript in range(5):
@@ -79,6 +82,7 @@ show(eqs)
 
 
 eqs = nontriv(bigsubs(bigsubs(eqs, c1, c), c2, c))
+nice = eqs
 show(eqs)
 
 
@@ -93,6 +97,9 @@ show(eqs)
 
 
 eqs = nontriv(bigsubs(eqs, a, only(solve(eqs[2], a))))
+up55_, lo55_ = eqs
+up55 = (up55_.lhs - up55_.rhs).expand()
+lo55 = (lo55_.lhs - lo55_.rhs).expand()
 show(eqs)
 
 
