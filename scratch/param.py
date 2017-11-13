@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[2]:
 
 
 import sys
@@ -19,7 +19,7 @@ from points import *
 from ec import EllipticCurve, Point
 
 
-# In[2]:
+# In[3]:
 
 
 M_ = 4*m+d**2+2
@@ -29,14 +29,14 @@ eq = Eq(y**2, qqq)
 eq
 
 
-# In[3]:
+# In[4]:
 
 
 m_ = solve(Eq(0,(eq.rhs-(M+r)**2).subs(M, M_).expand()), m)[0].expand().simplify()
 m_
 
 
-# In[4]:
+# In[5]:
 
 
 def mat(r_, d_):
@@ -47,260 +47,76 @@ def yat(r_, d_):
     return y_.subs(r, r_).subs(d, d_)
 
 
-# In[5]:
+# In[6]:
 
 
 mat(-1, -1)
 
 
-# In[6]:
+# In[7]:
 
 
 mat(-2, 2)
 
 
-# In[7]:
+# In[8]:
 
 
 qq.subs(m, Rational(1,4)).subs(d, -1)
 
 
-# In[8]:
+# In[9]:
 
 
 tt_ = gamma + m + m**2
 ss_ = -2*m + 2*t
 
 
-# In[9]:
+# In[10]:
 
 
 #f^2 newly red iff (1/4)ss_^4+mss_^2=Y^2
 ((((ss_**4/4+m*ss_**2).expand().subs(t**2, tt_).subs(t**3, t*tt_).subs(gamma, gamma_nice.subs(beta, y)).subs(m, m_).subs(y, y_)).expand()))
 
 
-# In[10]:
+# In[11]:
 
 
 gammma = gamma_nice.subs(beta, y_).subs(m, m_)
 gammma
 
 
-# In[11]:
+# In[12]:
 
 
 first = (-m_-gammma)
 second = tt_.subs(gamma, gammma).subs(m, m_)
 
 
-# In[12]:
+# In[20]:
 
 
 (256*r**2*first).expand().factor()
 
 
-# In[13]:
-
-
-foo = (256*r**2*second).expand().factor()
-foo
-
-
-# In[53]:
-
-
-scnd = (-foo.as_two_terms()[1].as_two_terms()[1])
-scnd
-
-
-# In[15]:
-
-
-(first.subs(d, d)*256*r**2).expand()
-
-
-# In[16]:
-
-
-(second.subs(d, d)*256*r**2).expand()
-
-
-# In[18]:
-
-
-(second.subs(r, 1)).expand()
-
-
-# In[19]:
-
-
-(second.subs(d, 2)).expand()
-
-
-# In[20]:
-
-
-(second*256*r**2).expand().coeff(r, n=0).factor()
-
-
-# In[21]:
-
-
-(second*256*r**2).expand().coeff(d, n=0).factor()
-
-
 # In[22]:
 
 
-(first*256*r**2).expand().as_poly(r)
+fst = (256*r**2*first).expand().factor().as_two_terms()[1].as_two_terms()[1]
+fst
 
 
 # In[23]:
 
 
-(second*256*r**2).expand().as_poly(r)
+(256*r**2*second).expand().factor()
 
 
-# In[24]:
+# In[29]:
 
 
-tuple(map(lambda x: x.evalf(), solve((second*256*r**2).subs(d, 2).expand(), r)))
-
-
-# In[25]:
-
-
-tuple(map(lambda x: x.evalf(), solve((first).subs(d, 2).expand(), r)))
-
-
-# In[26]:
-
-
-(second*256*r**2).factor()
-
-
-# In[27]:
-
-
-meat = (second*256*r**2).factor().as_two_terms()[1].as_two_terms()[1]
-meat
-
-
-# In[28]:
-
-
-def is_real(x):
-    return x.as_real_imag()[1] == 0
-
-def rroots(P):
-    return sorted(tuple(filter(is_real, map(lambda x: x.evalf(), solve(P, r)))))
-
-def this_is_not_satisfying(d_):
-    fst = rroots(first.subs(d, d_))
-    snd = rroots(meat.subs(d, d_))
-    if len(fst)%2==1 and len(snd)%2==1:
-        return snd[-1] < fst[-2]
-
-
-# In[32]:
-
-
-d__ = False
-for d_ in range(1000):
-    if this_is_not_satisfying(d_):
-        display(d_)
-        d__ = d_
-
-
-# In[34]:
-
-
-d__
-
-
-# In[ ]:
-
-
-x.as_real_imag()
-
-
-# In[ ]:
-
-
-display(Latex(5))
-
-
-# In[37]:
-
-
-fst = (first*256*r**2).expand()
-fst
-
-
-# In[38]:
-
-
-snd = (second*256*r**2).expand()
+snd = -(256*r**2*second).expand().factor().as_two_terms()[1].as_two_terms()[1]
 snd
 
 
-# In[46]:
-
-
-fst
-
-
-# In[54]:
-
-
-scnd
-
-
-# In[52]:
-
-
-fst.subs(r, x**4)
-
-
-# In[55]:
-
-
-fst.factor()
-
-
-# In[64]:
-
-
-frst = fst.factor().as_two_terms()[1].as_two_terms()[1]
-frst
-
-
-# In[73]:
-
-
-frst
-
-
-# In[74]:
-
-
-scnd
-
-
-# In[78]:
-
-
-frst.subs(r, -d**2)
-
-
-# In[79]:
-
-
-scnd.subs(r, -d**2)
-
-
-# In[81]:
-
-
-fst.factor()
-
+# f^3 newly red iff fst and snd non-square
