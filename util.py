@@ -6,7 +6,7 @@ import string
 import sympy as sy
 from sympy.abc import m, x, gamma
 
-xg = sy.Symbol('x xg')
+xg = sy.Symbol('xg')
 
 quad_split = (x - gamma)**2 + gamma + m
 quad_joined = xg**2 + gamma + m
