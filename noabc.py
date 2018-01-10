@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[3]:
 
 
 import itertools
@@ -50,7 +50,7 @@ def show(eqs):
     )))
 
 
-# In[2]:
+# In[4]:
 
 
 def binseqs(n):
@@ -67,7 +67,7 @@ for n in range(4):
         globals()['a_' + s] = Symbol('\\alpha_{' + s + '}')
 
 
-# In[3]:
+# In[5]:
 
 
 def mk_rt(*signs):
@@ -77,38 +77,42 @@ def mk_rt(*signs):
     return acc
 
 
-# In[4]:
+# In[26]:
 
 
-mk_rt(1, -1, -1)
+mk_rt(-1, -1, -1)
 
 
-# In[19]:
+# In[89]:
 
 
-p_ = (y + a_00)*(y + a*a_01)*(y + b*a_10)*(y + c*a_11)
+coeffs = ((x+a*mk_rt(1,1))*(x+b*mk_rt(1,-1))*(x+c*mk_rt(-1,1))*(x+d*mk_rt(-1,-1))).expand().as_poly(x).coeffs()
+for coeff in coeffs:
+    display(coeff)
+    display('')
 
 
-# In[20]:
+# In[23]:
 
 
+p_ = ((y + a_00)*(y + a*a_01)*(y + b*a_10)*(y + c*a_11)).expand()
 coeffs = [ coeff.expand() for coeff in p_.expand().as_poly(y).coeffs() ]
 coeffs
 
 
-# In[21]:
+# In[15]:
 
 
 co = coeffs[1]
 
 
-# In[22]:
+# In[16]:
 
 
 co
 
 
-# In[32]:
+# In[68]:
 
 
 # def reps(pp_):
@@ -121,25 +125,90 @@ co
 #     pp_.replace(mk_rt(1,1)*mk_rt(-1,-1), sqrt(m**2-mk_rt(1)*mk_rt(-1)+m*(mk_rt(1)-mk_rt(-1))))
 #     pp_.replace(mk_rt(-1,-1)*mk_rt(1,1), sqrt(m**2-mk_rt(1)*mk_rt(-1)+m*(mk_rt(1)-mk_rt(-1))))
 #     return pp_
+reps2 = [
+    (a_00*a_00, m+a_0),
+    (a_01*a_01, m+a_1),
+    (a_10*a_10, m-a_0),
+    (a_11*a_11, m-a_1),
+    (a_00*a_01, sqrt(m**2+m*(0+a_0+a_1)+a_0*a_1)),
+    (a_00*a_10, sqrt(m**2+m*(0+a_0-a_0)+a_0*a_0)),
+    (a_00*a_11, sqrt(m**2+m*(0+a_0-a_1)-a_0*a_1)),
+    (a_01*a_10, sqrt(m**2+m*(0+a_1-a_0)-a_1*a_0)),
+    (a_01*a_11, sqrt(m**2+m*(0+a_1-a_1)-a_1*a_1)),
+    (a_10*a_11, sqrt(m**2+m*(0-a_0-a_1)+a_1*a_1)),
+    ]
+
+reps1 = [
+    (a_0*a_0, m+sqrt(m-gamma)),
+    (a_1*a_1, m-sqrt(m-gamma)),
+    (a_0*a_1, sqrt(m*m-m+gamma)),
+    (a_1*a_0, sqrt(m*m-m+gamma)),
+    ]
+
+reps11 = [
+    (a_0, sqrt(m+sqrt(m-gamma))),
+    (a_1, sqrt(m-sqrt(m-gamma))),
+    ]
+
+repsp = [
+    ((m*(a_0-a_1)).expand(), m*sqrt(2*m-2*sqrt(m*m-m+gamma))),
+    ((m*(a_0+a_1)).expand(), m*sqrt(2*m+2*sqrt(m*m-m+gamma))),
+    ]
+
+repsc = [
+    (a*a, 1),
+    (b*b, 1),
+    (c*c, 1),
+    ]
 
 def reps(pp_):
-    pp_ = pp_.replace(a_00*a_01, sqrt(m**2+m*(0+a_0+a_1)+a_0*a_1))
-    pp_ = pp_.replace(a_00*a_10, sqrt(m**2+m*(0+a_0-a_0)+a_0*a_0))
-    pp_ = pp_.replace(a_00*a_11, sqrt(m**2+m*(0+a_0-a_1)-a_0*a_1))
-    pp_ = pp_.replace(a_01*a_10, sqrt(m**2+m*(0+a_1-a_0)-a_1*a_0))
-    pp_ = pp_.replace(a_01*a_11, sqrt(m**2+m*(0+a_1-a_1)-a_1*a_1))
-    pp_ = pp_.replace(a_10*a_11, sqrt(m**2+m*(0-a_0-a_1)+a_1*a_1))
+    pp_ = pp_.expand()
+    for old, new in reps2:
+        pp_ = (pp_ + pp_.coeff(old)*(new - old)).expand()
+    for old, new in reps1 + repsp + reps11 + repsc:
+        pp_ = pp_.subs(old, new).expand()
     return pp_
 
 
-# In[33]:
+# In[69]:
 
 
-reps((co*co).expand())
+reps(co*co).subs(((a_0-a_1)).expand(), x)
 
 
-# In[38]:
+# In[32]:
 
 
-(co*co).expand().replace(a_00*a_01, x)
+pp_ = (co*co).expand()
+pp_
+
+
+# In[36]:
+
+
+pp_ + pp_.coeff(a_00*a_00)*(x-a_00*a_00)
+
+
+# In[10]:
+
+
+aaa = 2*x*y + x + m*y
+
+
+# In[11]:
+
+
+aaa.coeff(x*y)
+
+
+# In[12]:
+
+
+co
+
+
+# In[70]:
+
+
+sqrt(x)
 
