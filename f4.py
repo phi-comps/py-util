@@ -81,42 +81,102 @@ eqs = nontriv(equate(f_it(4), p1_*p2_, xg))
 show(eqs)
 
 
-# In[6]:
+# In[5]:
 
 
 eqs = nontriv(bigsubs(eqs, g, only(solve(eqs[-1], g))))
 show(eqs)
 
 
-# In[7]:
+# In[6]:
 
 
 eqs = nontriv(bigsubs(eqs, e, only(solve(eqs[-1], e))))
 show(eqs)
 
 
-# In[8]:
+# In[7]:
 
 
 eqs = nontriv(bigsubs(eqs, c, only(solve(eqs[-1], c))))
 show(eqs)
 
 
-# In[9]:
+# In[8]:
 
 
 eqs = nontriv(bigsubs(eqs, a, only(solve(eqs[-1], a))))
 show(eqs)
 
 
-# In[10]:
+# In[9]:
 
 
 show(Eq(e.lhs, e.rhs.expand()) for e in eqs)
 
 
-# In[20]:
+# In[10]:
 
 
 solve(eqs[-1], d)
+
+
+# In[11]:
+
+
+# eqs = nontriv(bigsubs(eqs, b, only(solve(eqs[-1], b))))
+# show(eqs)
+
+
+# In[12]:
+
+
+eqs = nontriv(bigsubs(eqs, h, 0))
+show(eqs)
+
+
+# In[13]:
+
+
+show(Eq(e.lhs, e.rhs.expand()) for e in eqs)
+
+
+# In[14]:
+
+
+eqss = [ Eq(0, e.rhs.expand()-e.lhs) for e in eqs ]
+show(eqss)
+
+
+# In[15]:
+
+
+b_2_ = eqss[1].rhs+b**2
+b_2_
+
+
+# In[16]:
+
+
+ga_ = eqss[0].rhs+gamma
+ga_
+
+
+# In[17]:
+
+
+b_2_.as_poly(d)
+
+
+# In[23]:
+
+
+eqsss = [ Eq(e.lhs, e.rhs.expand()) for e in nontriv(bigsubs(eqss, b, only(solve(eqss[-1], b)))) ]
+show(eqsss)
+
+
+# In[24]:
+
+
+show(nontriv(bigsubs(eqss, m, 0)))
 
