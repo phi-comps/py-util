@@ -5,7 +5,7 @@ in stdenv.mkDerivation {
   name = "env";
   buildInputs = with python3Packages; [
     sympy
-    pyeclib
+    # pyeclib
     python3
     notebook
     jupyter_console
